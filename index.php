@@ -7,7 +7,7 @@
  * @license MIT License <http://opensource.org/licenses/MIT>
  */
 ob_start();
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $locale = ""; $language = ""; $project = "";
 $locale_force_get = false; $language_force_get = false; $project_force_get = false;
@@ -18,7 +18,7 @@ $I18N = new Intuition(array(
   'domain' => 'raun',
   'suppressbrackets' => true,
 ));
-$I18N->registerDomain( 'raun', __DIR__ . '/../messages' );
+$I18N->registerDomain( 'raun', __DIR__ . '/messages' );
 
 $locale = $I18N->getLang();
 if (isset($_GET['userlang'])) {
@@ -56,16 +56,21 @@ ob_end_clean();
     <meta name="author" content="Kenrick">
     <!-- <link rel="shortcut icon" href="img/favicon.png"> -->
 
-    <title>ra&middot;un<?php echo $title_info; ?></title>
+    <title>Raun<?php echo $title_info; ?></title>
 
     <!-- CSS -->
     <link href='//fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
-    <link href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
 <?php
+function isDntOn() {
+  return (isset($_SERVER['HTTP_DNT']) && $_SERVER['HTTP_DNT'] == 1);
+}
+
 // Google Analytics
-if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
+// Only at tools.wmflabs.org AND when DNT is not on
+if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false && !isDntOn()) {
 ?>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -89,20 +94,11 @@ if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand">ra&middot;un<span id="stat"></span></a>
+                <a class="navbar-brand">Raun<span id="stat"></span></a>
             </div>
 
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li>
-                    <?php
-                    // Help
-                    ?>
-                        <a href="#help" data-toggle="modal" data-target="#help">
-                            <span class="glyphicon glyphicon-question-sign"></span>
-                            <?php echo $I18N->msg( 'help' ); ?>
-                        </a>
-                    </li>
 
                     <li class="dropdown">
                     <?php
@@ -217,26 +213,16 @@ if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
                         <?php echo $I18N->msg( 'about' ); ?>
                     </a>
                     </li>
-                    <li class="dropdown" id="stat-container-menu">
+                    <li>
                     <?php
-                    // Statistics
+                    // Help
                     ?>
-                        <a href="#" class="dropdown-toggle stop-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-stats"></span>
-                            <?php echo $I18N->msg( 'stat' ); ?>
-                            <b class="caret"></b>
+                        <a href="#help" data-toggle="modal" data-target="#help">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                            <?php echo $I18N->msg( 'help' ); ?>
                         </a>
-                        <div class="dropdown-menu keep-open">
-                            <div id="stat-content">
-                                <div title="<?php echo $I18N->msg( 'time_utc' ); ?>" id="time-wrapper">
-                                    <span class="glyphicon glyphicon-time"></span> <span id="tz"></span>
-                                </div>
-                                <div id="w_stat">
-                                    <img src='img/loading.gif' class="loading" alt="loading">
-                                </div>
-                            </div>
-                        </div>
                     </li>
+
                 </ul>
             </div><!--/.nav-collapse -->
 
@@ -251,7 +237,7 @@ if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
         <footer>
             <b>ra&middot;un</b>&nbsp;<i><?php echo $I18N->msg( 'def_i' ); ?></i>&nbsp;<?php echo $I18N->msg( 'def_def' ); ?>
             <br>
-            <?php echo $I18N->msg( 'about_github' ,  array('variables' => array( '<a href="https://github.com/kenrick95/Raun">github.com/kenrick95/Raun</a>' ), 'parsemag' => true ) ); ?>
+            <?php echo $I18N->msg( 'about_github' ,  array('variables' => array( '<a href="//github.com/kenrick95/Raun">github.com/kenrick95/Raun</a>' ), 'parsemag' => true ) ); ?>
         </footer>
     </div><!-- /.container -->
 
@@ -389,7 +375,6 @@ if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
                             <li>Bootstrap 3.1.1</li>
                             <li>jQuery 2.1.4</li>
                             <li>Wikimedia's MediaWiki API</li>
-                            <li>Nanobar 0.0.6</li>
                             <li>Headroom.js 0.7.0</li>
                             <li>ORES</li>
                         </ul>
@@ -412,8 +397,8 @@ if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
 
     <!-- JavaScript files -->
     <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/nanobar/0.0.6/nanobar.min.js"></script>
+    <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/vue/0.11.8/vue.min.js"></script>
     <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/headroom/0.7.0/headroom.min.js"></script>
     <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/socket.io/0.9.17/socket.io.min.js"></script>
     <script src="//tools.wmflabs.org/intuition/load.php?env=standalone"></script>
@@ -428,6 +413,6 @@ if (stripos("tools.wmflabs.org", $_SERVER["SERVER_NAME"]) !== false) {
         project: <?php echo $project_force_get ? 1 : 0; ?>,
     };
     </script>
-    <script src="js/raun-streamlined.js"></script>
+    <script src="js/raun.js"></script>
 </body>
 </html>
